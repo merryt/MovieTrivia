@@ -8,6 +8,7 @@
         padding-bottom: 3rem;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Helvetica, Arial, sans-serif;
+        overflow: hidden;
       }
       .nextQuestion,
       .guess {
@@ -61,15 +62,31 @@
       /* work on responsive */
       .gameContainer {
         display: flex;
+        background: radial-gradient(#00d2ff, #3a47d5);
       }
       .players {
-        width: 35%;
-        border-right: 1px solid rgba(50, 50, 50, 0.4);
-        height: 100vh;
+        width: 31%;
+        height: 93vh;
+        margin: 2%;
         padding: 10px 15px;
+        position: relative;
+      }
+      .players::after {
+        content: " ";
+        opacity: 16%;
+        background-color: #fff;
+        backdrop-filter: blur(10px);
+        width: 100%;
+        height: 92vh;
+        top: 0;
+        left: 0;
+        position: absolute;
+        box-shadow: 0 0 25px rgb(255, 255, 255, 1);
+        filter: blur(1px);
       }
       .players > p {
         font-size: 10px;
+        font-weight: 900;
       }
       .profileCard {
         display: flex;
@@ -81,7 +98,11 @@
         padding: 10px 15px;
       }
       .clue {
-        margin-bottom: 10px;
+        margin-bottom: 16px;
+        font-size: 17px;
+        text-align: center;
+        text-shadow: 0 0 10px rgb(255 255 255 / 25%);
+        font-weight: 600;
       }
       .nameModelOuter {
         width: 100vw;
