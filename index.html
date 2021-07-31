@@ -1,341 +1,349 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Movie Trivia</title>
-    <style>
-      body {
-        margin: 0;
-        padding-bottom: 3rem;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Helvetica, Arial, sans-serif;
-        overflow: hidden;
-      }
-      .hostPanel,
-      .guess {
-        background: rgba(0, 0, 0, 0.15);
-        padding: 0.25rem;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        height: 3rem;
-        box-sizing: border-box;
-        backdrop-filter: blur(10px);
-      }
-      #guessInput {
-        border: none;
-        padding: 0 1rem;
-        flex-grow: 1;
-        border-radius: 2rem;
-        margin: 0.25rem;
-      }
-      #guessInput:focus {
-        outline: none;
-      }
 
-      .guess > button,
-      .hostPanel > button {
-        background: #333;
-        border: none;
-        padding: 0 1rem;
-        margin: 0.25rem;
-        border-radius: 3px;
-        outline: none;
-        color: #fff;
-        min-height: 25px;
-      }
+<head>
+  <title>Movie Trivia</title>
+  <style>
+    body {
+      margin: 0;
+      padding-bottom: 3rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
 
-      #newButton {
-        background-color: #421a8e;
-      }
+    .hostPanel,
+    .guess {
+      background: rgba(0, 0, 0, 0.15);
+      padding: 0.25rem;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      height: 3rem;
+      box-sizing: border-box;
+      backdrop-filter: blur(10px);
+    }
 
-      .hostPanel {
-        display: none;
-        justify-content: center;
-        align-items: center;
-      }
-      .answer {
-        margin-right: 10px;
-      }
+    #guessInput {
+      border: none;
+      padding: 0 1rem;
+      flex-grow: 1;
+      border-radius: 2rem;
+      margin: 0.25rem;
+    }
 
-      /* work on responsive */
-      .gameContainer {
-        display: flex;
-        background: radial-gradient(#00d2ff, #3a47d5);
-      }
-      .playersContainer {
-        width: 31%;
-        height: 93vh;
-        margin: 2%;
-        padding: 10px 15px;
-        position: relative;
-      }
-      .playersContainer::after {
-        content: " ";
-        opacity: 20%;
-        background-color: #fff;
-        backdrop-filter: blur(10px);
-        width: 100%;
-        height: 92vh;
-        top: 0;
-        left: 0;
-        position: absolute;
-        box-shadow: 0 0 25px rgb(255, 255, 255, 1);
-        filter: blur(1px);
-      }
-      .playersContainer > p,
-      .players{
-        position: absolute;
-        z-index: 3;
-      }
-      .playersContainer > p {
-        font-size: 10px;
-        font-weight: 900;
-      }
-      .players{        
-        top: 50px;
-        width: 90%; 
-      }
-      .profileCard {
-        display: flex;
-        justify-content: space-between;
-      }
-      #clues {
-        width: 65%;
-        height: 100vh;
-        padding: 10px 15px;
-      }
-      .clue {
-        margin-bottom: 16px;
-        font-size: 17px;
-        text-align: center;
-        text-shadow: 0 0 10px rgb(255 255 255 / 25%);
-        font-weight: 600;
-      }
-      .nameModelOuter {
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(50, 50, 50, 0.4);
-        z-index: 1;
-        position: absolute;
-      }
+    #guessInput:focus {
+      outline: none;
+    }
 
-      .nameModel {
-        width: 60vw;
-        height: 20vh;
-        top: 30vh;
-        left: 20vw;
-        position: absolute;
-        border-radius: 10px;
-        background-color: #fff;
-        padding: 20px;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        font-size: 15px;
-      }
+    .guess>button,
+    .hostPanel>button {
+      background: #333;
+      border: none;
+      padding: 0 1rem;
+      margin: 0.25rem;
+      border-radius: 3px;
+      outline: none;
+      color: #fff;
+      min-height: 25px;
+    }
 
-      .nameModel > input {
-        padding: 10px;
-        margin-top: 10px;
-      }
+    #newButton {
+      background-color: #421a8e;
+    }
 
-      .nameModel > button {
-        margin-top: 10px;
-        height: 35px;
-      }
-      .host{
-        margin-right: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="nameModelOuter" id="nameModel">
-      <div class="nameModel">
-        <label for="nameInput">What name you trying to use?</label>
-        <input
-          name="nameIntput"
-          id="nameIntput"
-          type="text"
-          value=""
-          placeholder="Tony? Tom? Jumbo?"
-        />
-        <button id="nameButton" onclick="newName()">Submit</button>
-      </div>
+    .hostPanel {
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .answer {
+      margin-right: 10px;
+    }
+
+    /* work on responsive */
+    .gameContainer {
+      display: flex;
+      background: radial-gradient(#00d2ff, #3a47d5);
+    }
+
+    .playersContainer {
+      width: 31%;
+      height: 93vh;
+      margin: 2%;
+      padding: 10px 15px;
+      position: relative;
+    }
+
+    .playersContainer::after {
+      content: " ";
+      opacity: 20%;
+      background-color: #fff;
+      backdrop-filter: blur(10px);
+      width: 100%;
+      height: 92vh;
+      top: 0;
+      left: 0;
+      position: absolute;
+      box-shadow: 0 0 25px rgb(255, 255, 255, 1);
+      filter: blur(1px);
+    }
+
+    .playersContainer>p,
+    .players {
+      position: absolute;
+      z-index: 3;
+    }
+
+    .playersContainer>p {
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .players {
+      top: 50px;
+      width: 90%;
+    }
+
+    .profileCard {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #clues {
+      width: 65%;
+      height: 100vh;
+      padding: 10px 15px;
+    }
+
+    .clue {
+      margin-bottom: 16px;
+      font-size: 17px;
+      text-align: center;
+      text-shadow: 0 0 10px rgb(255 255 255 / 25%);
+      font-weight: 600;
+    }
+
+    .nameModelOuter {
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(50, 50, 50, 0.4);
+      z-index: 1;
+      position: absolute;
+    }
+
+    .nameModel {
+      width: 60vw;
+      height: 20vh;
+      top: 30vh;
+      left: 20vw;
+      position: absolute;
+      border-radius: 10px;
+      background-color: #fff;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    .nameModel>input {
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    .nameModel>button {
+      margin-top: 10px;
+      height: 35px;
+    }
+
+    .host {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="nameModelOuter" id="nameModel">
+    <div class="nameModel">
+      <label for="nameInput">What name you trying to use?</label>
+      <input name="nameIntput" id="nameIntput" type="text" value="" placeholder="Tony? Tom? Jumbo?" />
+      <button id="nameButton" onclick="newName()">Submit</button>
     </div>
+  </div>
 
-    <!-- todo: style player template -->
-    <template id="playerTemplate">
-      <div class="profileCard">
-        <span>          
-          <span class="name"></span>        
-          <span class="host"></span>
-        </span>
-        <span class="hasGuessed"></span>
-      </div>
-    </template>
-
-    <!-- todo: style player template -->
-    <template id="clueTemplate">
-      <div class="clueCard">
-        <div class="clue"></div>
-      </div>
-    </template>
-
-    <div class="gameContainer">
-      <div class="playersContainer">
-        <p>Who is in the game?</p>
-        <div id="players" class=players></div>
-      </div>
-      <div id="clues"></div>
+  <!-- todo: style player template -->
+  <template id="playerTemplate">
+    <div class="profileCard">
+      <span>
+        <span class="name"></span>
+        <span class="host"></span>
+      </span>
+      <span class="hasGuessed"></span>
     </div>
+  </template>
 
-    <div id="guess" class="guess">
-      <input
-        id="guessInput"
-        autocomplete="off"
-        placeholder="your guess (you only get one shot, don't blow it)"
-      /><button onclick="myGuess()" id="guessButton">Send</button>
+  <!-- todo: style player template -->
+  <template id="clueTemplate">
+    <div class="clueCard">
+      <div class="clue"></div>
     </div>
+  </template>
 
-    <div id="hostPanel" class="hostPanel">
-      <div class="answer"></div>
-      <button onclick="nextClue()" id="nextButton">Next Clue</button>
-      <button onclick="newQuiz()" id="newButton">
-        New Movie
-      </button>
-      <button onclick="showAnswers()" id="showAnswersButton">
-        Show Answers
-      </button>
+  <div class="gameContainer">
+    <div class="playersContainer">
+      <p>Who is in the game?</p>
+      <div id="players" class=players></div>
     </div>
+    <div id="clues"></div>
+  </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-      const gameId = window.location.href.substring(
-        window.location.href.lastIndexOf("/") + 1
-      );
-      var socket = io();
+  <div id="guess" class="guess">
+    <input id="guessInput" autocomplete="off" placeholder="your guess (you only get one shot, don't blow it)" /><button
+      onclick="myGuess()" id="guessButton">Send</button>
+  </div>
 
-      const nameInput = document.querySelector("#nameIntput");
-      const nameButton = document.querySelector("#nameButton");
-      const guessInput = document.querySelector("#guessInput");
-      const guessButton = document.querySelector("#guessButton");
-      const playersDiv = document.querySelector("#players");
-      const cluesDiv = document.querySelector("#clues");
-      const playerTemplate = document.querySelector("#playerTemplate");
-      const clueTemplate = document.querySelector("#clueTemplate");
+  <div id="hostPanel" class="hostPanel">
+    <div class="answer"></div>
+    <button onclick="nextClue()" id="nextButton">Next Clue</button>
+    <button onclick="newQuiz()" id="newButton">
+      New Movie
+    </button>
+    <button onclick="showAnswers()" id="showAnswersButton">
+      Show Answers
+    </button>
+  </div>
 
-      nameInput.addEventListener("keyup", function (event) {
-        if (event.keyCode === 13) {
-          event.preventDefault();
-          nameButton.click();
-        }
-      });
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const gameId = window.location.href.substring(
+      window.location.href.lastIndexOf("/") + 1
+    );
+    var socket = io();
 
-      const newName = function () {
-        const name = nameInput.value;
-        if (name) {
-          socket.emit("update name", {
-            name: name,
-            gameId: gameId,
-          });
-          document.querySelector("#nameModel").style.display = "none";
-        }
-      };
+    const nameInput = document.querySelector("#nameIntput");
+    const nameButton = document.querySelector("#nameButton");
+    const guessInput = document.querySelector("#guessInput");
+    const guessButton = document.querySelector("#guessButton");
+    const playersDiv = document.querySelector("#players");
+    const cluesDiv = document.querySelector("#clues");
+    const playerTemplate = document.querySelector("#playerTemplate");
+    const clueTemplate = document.querySelector("#clueTemplate");
 
-      guessInput.addEventListener("keyup", function (event) {
-        if (event.keyCode === 13) {
-          event.preventDefault();
-          guessButton.click();
-        }
-      });
+    nameInput.addEventListener("keyup", function (event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        nameButton.click();
+      }
+    });
 
-      const myGuess = function () {
-        const guess = guessInput.value;
-        if (guess) {
-          socket.emit("make guess", {
-            guess: guess,
-            gameId: gameId,
-          });
-          document.querySelector(".guess").style.display = "none";
-        }
-      };
-
-      const nextClue = function () {
-        socket.emit("next clue", {
+    const newName = function () {
+      const name = nameInput.value;
+      if (name) {
+        socket.emit("update name", {
+          name: name,
           gameId: gameId,
         });
-      };
+        document.querySelector("#nameModel").style.display = "none";
+      }
+    };
 
-      const showAnswers = function (){        
-        socket.emit("show answers", {
+    guessInput.addEventListener("keyup", function (event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        guessButton.click();
+      }
+    });
+
+    const myGuess = function () {
+      const guess = guessInput.value;
+      if (guess) {
+        socket.emit("make guess", {
+          guess: guess,
           gameId: gameId,
         });
+        document.querySelector(".guess").style.display = "none";
+      }
+    };
+
+    const nextClue = function () {
+      socket.emit("next clue", {
+        gameId: gameId,
+      });
+    };
+
+    const showAnswers = function () {
+      socket.emit("show answers", {
+        gameId: gameId,
+      });
+    }
+
+    socket.on("players", function (body) {
+      playersDiv.innerHTML = "";
+      if (body.host) {
+        console.log("hidding guess area");
+        document.querySelector(".guess").style.display = "none";
+        document.querySelector(".answer").innerHTML = body.movie;
+        document.querySelector(".hostPanel").style.display = "flex";
       }
 
-      socket.on("players", function (body) {
-        playersDiv.innerHTML = "";        
+      for (player of body.players) {
+        playerTemplate.content.querySelector(".name").innerHTML = player.name;
+        if (player.isHost) {
+          //if player is host render them with crown
+          playerTemplate.content.querySelector(".host").innerHTML = "👑";
+          playerTemplate.content.querySelector(".hasGuessed").innerHTML = "";
+        } else {
+          playerTemplate.content.querySelector(".host").innerHTML = "";
+          if (player.guess) {
+            playerTemplate.content.querySelector(
+              ".hasGuessed"
+            ).innerHTML = player.guess
+          } else {
+            playerTemplate.content.querySelector(
+              ".hasGuessed"
+            ).innerHTML = player.hasGuess ? "Answered💡" : "Thinking 🧠";
+          }
+        }
+
         if (body.host) {
-          console.log("hidding guess area");
-          document.querySelector(".guess").style.display = "none";
-          document.querySelector(".answer").innerHTML = body.movie;
-          document.querySelector(".hostPanel").style.display = "flex";
+          playerTemplate.content.querySelector(".hasGuessed").innerHTML =
+            player.guess || " ";
         }
-        for (player of body.players) {
-          playerTemplate.content.querySelector(".name").innerHTML = player.name;          
-          if (player.isHost) {
-            //if player is host render them with crown
-            playerTemplate.content.querySelector(".host").innerHTML = "👑";
-            playerTemplate.content.querySelector(".hasGuessed").innerHTML = "";
-          } else {            
-            playerTemplate.content.querySelector(".host").innerHTML = "";
-            if(player.guess){
-              playerTemplate.content.querySelector(
-                ".hasGuessed"
-              ).innerHTML = player.guess
-            }else{ 
-              playerTemplate.content.querySelector(
-                ".hasGuessed"
-              ).innerHTML = player.hasGuess ? "Answered💡" : "Thinking 🧠";
-            }
-          }
 
-          if (body.host) {            
-            playerTemplate.content.querySelector(".hasGuessed").innerHTML =
-              player.guess || " ";
-          }
+        const clone = document.importNode(playerTemplate.content, true);
+        playersDiv.appendChild(clone);
+      }
+    });
 
-          const clone = document.importNode(playerTemplate.content, true);
-          playersDiv.appendChild(clone);
-        }
+    socket.on("new clue", function (body) {
+      clueTemplate.content.querySelector(".clue").innerHTML = body.clue;
+      const clone = document.importNode(clueTemplate.content, true);
+      cluesDiv.appendChild(clone);
+      if (body.questionsRemaining == 0) {
+        document.querySelector("#nextButton").style.display = "none";
+        document.querySelector("#newButton").style.display = "inline-block";
+      }
+    });
+
+    const newQuiz = function () {
+      socket.emit("new question", {
+        gameId: gameId,
       });
+    };
 
-      socket.on("new clue", function (body) {                
-        clueTemplate.content.querySelector(".clue").innerHTML = body.clue;
-        const clone = document.importNode(clueTemplate.content, true);
-        cluesDiv.appendChild(clone);
-        if (body.questionsRemaining == 0) {
-          document.querySelector("#nextButton").style.display = "none";
-          document.querySelector("#newButton").style.display = "inline-block";
-        }
-      });
+    socket.on("clear board", function () {
+      console.log("New game is starting");
+      cluesDiv.innerHTML = "";
+      document.querySelector("#nextButton").style.display = "inline-block";
+      guessInput.value = "";
+      document.querySelector(".guess").style.display = "flex";
+    });
+  </script>
+</body>
 
-      const newQuiz = function () {
-        socket.emit("new question", {
-          gameId: gameId,
-        });
-      };
-
-      socket.on("clear board", function (isHost) {                
-        console.log(socket)
-        console.log("New game is starting");
-        cluesDiv.innerHTML = "";
-        document.querySelector("#nextButton").style.display = "inline-block";             
-        if(!isHost){document.querySelector(".guess").style.display = "flex";}      
-        guessInput.value = "";
-      });
-    </script>
-  </body>
 </html>

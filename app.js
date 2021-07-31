@@ -291,8 +291,8 @@ io.on("connection", (socket) => {
       playerSocket.guess = "";
     });
     const showAnswers = false;
+    io.to(room).emit("clear board");
     updatePlayerStatus(socket, room, showAnswers);
-    io.to(room).emit("clear board", socket.isHost);
   });
 });
 
