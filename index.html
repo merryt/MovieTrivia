@@ -10,7 +10,7 @@
           Helvetica, Arial, sans-serif;
         overflow: hidden;
       }
-      .nextQuestion,
+      .hostPanel,
       .guess {
         background: rgba(0, 0, 0, 0.15);
         padding: 0.25rem;
@@ -35,7 +35,7 @@
       }
 
       .guess > button,
-      .nextQuestion > button {
+      .hostPanel > button {
         background: #333;
         border: none;
         padding: 0 1rem;
@@ -50,7 +50,7 @@
         background-color: #421a8e;
       }
 
-      .nextQuestion {
+      .hostPanel {
         display: none;
         justify-content: center;
         align-items: center;
@@ -64,16 +64,16 @@
         display: flex;
         background: radial-gradient(#00d2ff, #3a47d5);
       }
-      .players {
+      .playersContainer {
         width: 31%;
         height: 93vh;
         margin: 2%;
         padding: 10px 15px;
         position: relative;
       }
-      .players::after {
+      .playersContainer::after {
         content: " ";
-        opacity: 16%;
+        opacity: 20%;
         background-color: #fff;
         backdrop-filter: blur(10px);
         width: 100%;
@@ -84,9 +84,18 @@
         box-shadow: 0 0 25px rgb(255, 255, 255, 1);
         filter: blur(1px);
       }
-      .players > p {
+      .playersContainer > p,
+      .players{
+        position: absolute;
+        z-index: 3;
+      }
+      .playersContainer > p {
         font-size: 10px;
         font-weight: 900;
+      }
+      .players{        
+        top: 50px;
+        width: 90%; 
       }
       .profileCard {
         display: flex;
@@ -137,6 +146,9 @@
         margin-top: 10px;
         height: 35px;
       }
+      .host{
+        margin-right: 10px;
+      }
     </style>
   </head>
   <body>
@@ -157,8 +169,10 @@
     <!-- todo: style player template -->
     <template id="playerTemplate">
       <div class="profileCard">
-        <span class="name"></span>
-        <span class="host"></span>
+        <span>          
+          <span class="name"></span>        
+          <span class="host"></span>
+        </span>
         <span class="hasGuessed"></span>
       </div>
     </template>
@@ -171,9 +185,9 @@
     </template>
 
     <div class="gameContainer">
-      <div class="players">
+      <div class="playersContainer">
         <p>Who is in the game?</p>
-        <div id="players"></div>
+        <div id="players" class=players></div>
       </div>
       <div id="clues"></div>
     </div>
@@ -186,11 +200,14 @@
       /><button onclick="myGuess()" id="guessButton">Send</button>
     </div>
 
-    <div id="nextQuestion" class="nextQuestion">
+    <div id="hostPanel" class="hostPanel">
       <div class="answer"></div>
-      <button onclick="nextQuestion()" id="nextButton">Send</button>
-      <button onclick="newQuiz()" id="newButton" style="display: none">
+      <button onclick="nextClue()" id="nextButton">Next Clue</button>
+      <button onclick="newQuiz()" id="newButton">
         New Movie
+      </button>
+      <button onclick="showAnswers()" id="showAnswersButton">
+        Show Answers
       </button>
     </div>
 
@@ -246,34 +263,46 @@
         }
       };
 
-      const nextQuestion = function () {
-        socket.emit("next question", {
+      const nextClue = function () {
+        socket.emit("next clue", {
           gameId: gameId,
         });
       };
 
+      const showAnswers = function (){        
+        socket.emit("show answers", {
+          gameId: gameId,
+        });
+      }
+
       socket.on("players", function (body) {
-        playersDiv.innerHTML = "";
-        console.log(body);
+        playersDiv.innerHTML = "";        
         if (body.host) {
           console.log("hidding guess area");
           document.querySelector(".guess").style.display = "none";
           document.querySelector(".answer").innerHTML = body.movie;
-          document.querySelector(".nextQuestion").style.display = "flex";
+          document.querySelector(".hostPanel").style.display = "flex";
         }
         for (player of body.players) {
-          playerTemplate.content.querySelector(".name").innerHTML = player.name;
+          playerTemplate.content.querySelector(".name").innerHTML = player.name;          
           if (player.isHost) {
             //if player is host render them with crown
             playerTemplate.content.querySelector(".host").innerHTML = "👑";
-          } else {
-            playerTemplate.content.querySelector(".host").innerHTML = " ";
-            playerTemplate.content.querySelector(
-              ".hasGuessed"
-            ).innerHTML = player.hasGuess ? "☑" : "☐";
+            playerTemplate.content.querySelector(".hasGuessed").innerHTML = "";
+          } else {            
+            playerTemplate.content.querySelector(".host").innerHTML = "";
+            if(player.guess){
+              playerTemplate.content.querySelector(
+                ".hasGuessed"
+              ).innerHTML = player.guess
+            }else{ 
+              playerTemplate.content.querySelector(
+                ".hasGuessed"
+              ).innerHTML = player.hasGuess ? "Answered💡" : "Thinking 🧠";
+            }
           }
 
-          if (body.host) {
+          if (body.host) {            
             playerTemplate.content.querySelector(".hasGuessed").innerHTML =
               player.guess || " ";
           }
@@ -283,7 +312,7 @@
         }
       });
 
-      socket.on("new clue", function (body) {
+      socket.on("new clue", function (body) {                
         clueTemplate.content.querySelector(".clue").innerHTML = body.clue;
         const clone = document.importNode(clueTemplate.content, true);
         cluesDiv.appendChild(clone);
@@ -299,12 +328,13 @@
         });
       };
 
-      socket.on("clear board", function () {
-        console.log("clearing board");
+      socket.on("clear board", function (isHost) {                
+        console.log(socket)
+        console.log("New game is starting");
         cluesDiv.innerHTML = "";
-        document.querySelector("#nextButton").style.display = "inline-block";
-        document.querySelector("#newButton").style.display = "none";
-        document.querySelector(".guess").style.display = "flex";
+        document.querySelector("#nextButton").style.display = "inline-block";             
+        if(!isHost){document.querySelector(".guess").style.display = "flex";}      
+        guessInput.value = "";
       });
     </script>
   </body>

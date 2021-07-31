@@ -98,6 +98,55 @@ const movies = [
     currentClue: 0,
     movie: "Lion King",
   },
+  {
+    clues: [
+      "The star of this movie was made a Disney Legend in 1991",
+      "This musical is based on a true story... I doubt they sang these songs in real life though",
+      "This was one of two iconic musical by the same star that came out about the same time",
+      "The leading lady learned to play the gutiar for this film",
+      "In the movie the von trap family escapes nazis by frolicing over the alps",
+      "If you don't know by this point maybe you should say so long, or farewell, or auf wiedersehen, goodnight",
+      "The music in this musical has a certain sound",
+    ],
+    currentClue: 0,
+    movie: "The Sound of Music",
+  },
+  {
+    clues: [
+      "The lead character (and person who movie is named after) got his first pair of shoes at 7 years old",
+      "Collegite football for Alabama take the narator to the white house",
+      "This movie is kinda a movie version of 'we did't start the fire' by billy joel",
+      "This movie fills a fair bit of its 142 minute run time with descriptions of shrimp and rain",
+      "Due to the success of Lieutenant Dan's character, Gary Sinise has formed a foundation for injured war veterans",
+      "This movie taught us life is like a box of chocolates",
+      "Run Forrest Run",
+    ],
+    currentClue: 0,
+    movie: "Forrest Gump",
+  },
+  {
+    clues: [
+      "This movie follows the love story of a FedEx opperations Exec and a grad student",
+      "Lines were written for an inanimate object to make dialogue more realistic, my eyes started sweating when that object got lost",
+      "The actor actually grew his beard and facial hair out for parts of this move... like really grew them out",
+      "Tom Hanks said that the hardest part of losing so much weight was not eating any French fries for a long time,",
+      "It took 21 minutes before they actulla cast anyone away",
+    ],
+    currentClue: 0,
+    movie: "Cast Away",
+  },
+  {
+    clues: [
+      "The first easter egg/forshadowing of this movie was 8 years before it was released in Iron Man 2",
+      "Wesley snipes was originally hand chosen for the star role but due to special effects limitations the movie wasn't made.",
+      "Martin Freeman and Andy Serkis played Bilbo and Gollum, respectively, in The Hobbit Trilogy. They were affectionately known on the predominantly black set as the 'Tolkien White Guys'.",
+      "The film won 3 Academy Awards for Best Costume Design, Best Production Design and Best Original Score.",
+      "The heros home land is named after the Wakamba tribe of Kenya",
+      "This comic book movie shares its title with a dark colored leopard",
+    ],
+    currentClue: 0,
+    movie: "Black Panther",
+  },
 ];
 
 const getRandomMovie = () => {
@@ -127,7 +176,7 @@ app.get("/g/:gameId", (req, res) => {
   }
 });
 
-updatePlayerStatus = (socket, room) => {
+updatePlayerStatus = (socket, room, showAnswers) => {
   const playerIDs = io.sockets.adapter.rooms.get(room);
   let players = [...playerIDs].map((player) => {
     const playerSocket = io.sockets.sockets.get(player);
@@ -141,7 +190,7 @@ updatePlayerStatus = (socket, room) => {
     };
   });
 
-  const playersForHost = players.map((player) => {
+  const playersWithAnswers = players.map((player) => {
     return {
       name: player.name,
       hasGuess: player.guess ? true : false,
@@ -149,6 +198,7 @@ updatePlayerStatus = (socket, room) => {
       isHost: player.isHost,
     };
   });
+
   const playersForPlayers = players.map((player) => {
     return {
       name: player.name,
@@ -162,7 +212,13 @@ updatePlayerStatus = (socket, room) => {
       player.playerSocket.emit("players", {
         host: true,
         movie: rooms[room].movie,
-        players: playersForHost,
+        players: playersWithAnswers,
+      });
+    } else if (showAnswers) {
+      player.playerSocket.emit("players", {
+        host: false,
+        movie: rooms[room].movie,
+        players: playersWithAnswers,
       });
     } else {
       player.playerSocket.emit("players", {
@@ -187,16 +243,27 @@ io.on("connection", (socket) => {
       socket.isHost = false;
     }
 
-    updatePlayerStatus(socket, room);
+    const showAnswers = false;
+    updatePlayerStatus(socket, room, showAnswers);
   });
 
   socket.on("make guess", (body) => {
     socket.guess = body.guess;
     room = body.gameId;
-    updatePlayerStatus(socket, room);
+    const showAnswers = false;
+    updatePlayerStatus(socket, room, showAnswers);
   });
 
-  socket.on("next question", (body) => {
+  socket.on("show answers", (body) => {
+    room = body.gameId;
+    const showAnswers = true;
+    updatePlayerStatus(socket, room, showAnswers);
+  });
+
+  socket.on("next clue", (body) => {
+    // host requests new clue
+    if (!socket.isHost) return false;
+
     const room = body.gameId;
     const roomInfo = rooms[room];
     const clues = roomInfo["clues"];
@@ -212,6 +279,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("new question", (body) => {
+    // host asks for new game, body contains gameId
+    if (!socket.isHost) return false;
+
     room = body.gameId;
     rooms[room] = getRandomMovie();
 
@@ -220,8 +290,9 @@ io.on("connection", (socket) => {
       const playerSocket = io.sockets.sockets.get(player);
       playerSocket.guess = "";
     });
-    updatePlayerStatus(socket, room);
-    io.to(room).emit("clear board", "");
+    const showAnswers = false;
+    updatePlayerStatus(socket, room, showAnswers);
+    io.to(room).emit("clear board", socket.isHost);
   });
 });
 
