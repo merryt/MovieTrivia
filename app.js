@@ -147,6 +147,19 @@ const movies = [
     currentClue: 0,
     movie: "Black Panther",
   },
+  {
+    clues: [
+      "This franchise was filmed all over the world including Tunisia, France, Sri Lanka, England, Spain, Italy, and across the United States",
+      "The first movie in this series was added to the National Film Registry by the United States Library of Congress in 1999",
+      "The name of the main character comes from a creators dog.",
+      "This oscar winning franchise won awards for its sound design, the most famous scene involved a rolling boulder",
+      "Tom Selleck was the frist choice for the lead, but it eventually went to a 'scruffy looking nerf herder' (no, it isn't star wars) ",
+      "This was originally a trilogy, and many fans probably wish it still was. Cate Blanchett and Shia LaBeouf didn't impove the fourth installment",
+      "If you don't know by this point we are on our 'last crusade', and we might have more luck looking for the 'lost ark'",
+    ],
+    currentClue: 0,
+    movie: "Indiana Jones",
+  },
 ];
 
 const getRandomMovie = () => {
